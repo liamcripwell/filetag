@@ -4,12 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
-	"reflect"
 )
 
-// Record ... to store tags
+// Record - represents a file record
 type Record struct {
 	FileName string   `json:"filename"`
 	Tags     []string `json:"tags"`
@@ -17,47 +15,53 @@ type Record struct {
 
 func main() {
 
+	records := getRecordsFromFile("data.json")
+	existing := -1
+
+	for i, record := range records {
+		if record.FileName == os.Args[1] {
+			existing = i
+		}
+	}
+
+	if existing < 0 {
+		newFile := Record{os.Args[1], os.Args[2:]}
+		records = append(records, newFile)
+	} else {
+		records[existing].Tags =
+			append(records[existing].Tags, os.Args[2:]...)
+	}
+
+	writeRecordsToFile(records, "data.json")
+	fmt.Println("Done...")
+}
+
+func getRecordsFromFile(file string) []Record {
+	// read in file
+	b, err := ioutil.ReadFile(file)
+	if err != nil {
+		fmt.Print(err)
+	}
+	jsonContent := string(b)
+
+	// parse the JSON
+	var objs []Record
+	json.Unmarshal([]byte(jsonContent), &objs)
+
+	return objs
+}
+
+func writeRecordsToFile(records []Record, file string) {
 	// open file to write data to
-	f, err := os.OpenFile("data.json", os.O_RDWR|os.O_CREATE, 0666)
+	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Println("Can't data open file...")
 		return
 	}
 	defer f.Close()
 
-	b, err := ioutil.ReadFile("data.json") // just pass the file name
-	if err != nil {
-		fmt.Print(err)
-	}
-	jsonContent := string(b)
-
-	// Parse the JSON.
-	var objs interface{}
-	json.Unmarshal([]byte(jsonContent), &objs)
-
-	// Ensure that it is an array of objects.
-	objArr, ok := objs.([]interface{})
-	if !ok {
-		log.Fatal("expected an array of objects")
-	}
-
-	// Handle each object as a map[string]interface{}.
-	for i, obj := range objArr {
-		obj, ok := obj.(map[string]interface{})
-		if !ok {
-			log.Fatalf("expected type map[string]interface{}, got %s", reflect.TypeOf(objArr[i]))
-		}
-		fmt.Printf("i=%d, o=%T\n", i, obj) // Do something with the object...
-		fmt.Println(obj["filename"])
-	}
-
-	// create new File from cmdline args
-	var files []Record
-	newFile := Record{os.Args[1], os.Args[2:]}
-	files = append(files, newFile)
-
 	// marshal files to json
-	data, err := json.Marshal(files)
+	data, err := json.Marshal(records)
 	if err != nil {
 		fmt.Println("Can't create json...")
 	}
@@ -65,6 +69,4 @@ func main() {
 	// write data to file
 	f.Write(data)
 	f.Close()
-
-	fmt.Println("Done...")
 }
