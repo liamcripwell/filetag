@@ -18,7 +18,7 @@ func main() {
 	records := getRecordsFromFile("data.json")
 	existing := -1
 
-	// check whether a record alreadu exists for file
+	// check whether a record already exists for file
 	for i, record := range records {
 		if record.FileName == os.Args[1] {
 			existing = i
@@ -65,7 +65,7 @@ func writeRecordsToFile(records []Record, file string) {
 	defer f.Close()
 
 	// marshal files to json
-	data, err := json.Marshal(records)
+	data, err := json.MarshalIndent(records, "", "	")
 	if err != nil {
 		fmt.Println("Can't create json...")
 	}
