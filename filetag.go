@@ -30,8 +30,12 @@ func main() {
 		newFile := Record{os.Args[1], os.Args[2:]}
 		records = append(records, newFile)
 	} else {
-		records[existing].Tags =
-			append(records[existing].Tags, os.Args[2:]...)
+		for _, tag := range os.Args[2:] {
+			if !stringInSlice(tag, records[existing].Tags) {
+				records[existing].Tags =
+					append(records[existing].Tags, tag)
+			}
+		}
 	}
 
 	// write updated data to file
@@ -69,4 +73,13 @@ func writeRecordsToFile(records []Record, file string) {
 	// write data to file
 	f.Write(data)
 	f.Close()
+}
+
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }
