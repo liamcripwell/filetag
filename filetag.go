@@ -13,6 +13,10 @@ type Record struct {
 	Tags     []string `json:"tags"`
 }
 
+/*
+TODO:
+ - get records with tag
+*/
 func main() {
 	// get command argument
 	command := os.Args[1]
@@ -21,7 +25,6 @@ func main() {
 	records := getRecordsFromFile("data.json")
 
 	// perform chosen command
-	// TODO thing
 	switch command {
 	case "tag":
 		addContent(records)
@@ -31,7 +34,10 @@ func main() {
 
 }
 
+// Removes existing content from the data store
 func removeContent(records []Record) {
+	// TODO: remove tags
+	// TODO: warning
 	for i, record := range records {
 		if record.FileName == os.Args[2] {
 			records = append(records[:i], records[i+1:]...)
@@ -54,6 +60,7 @@ func addContent(records []Record) {
 
 	// update records with new content
 	if existing < 0 {
+		// FIXME: handle duplicate tags
 		newFile := Record{os.Args[2], os.Args[3:]}
 		records = append(records, newFile)
 	} else {
@@ -97,8 +104,6 @@ func writeRecordsToFile(records []Record, file string) {
 	if err != nil {
 		fmt.Println("Can't create json...")
 	}
-
-	fmt.Println(string(data))
 
 	// write data to file
 	f.Write(data)
