@@ -16,9 +16,14 @@ type Record struct {
 func main() {
 
 	records := getRecordsFromFile("data.json")
-	existing := -1
+	addContent(records)
+	fmt.Println("Done...")
+}
 
+// Adds new content to the data store
+func addContent(records []Record) {
 	// check whether a record already exists for file
+	existing := -1
 	for i, record := range records {
 		if record.FileName == os.Args[1] {
 			existing = i
@@ -40,9 +45,9 @@ func main() {
 
 	// write updated data to file
 	writeRecordsToFile(records, "data.json")
-	fmt.Println("Done...")
 }
 
+// Compiles a Record slice from a given JSON file
 func getRecordsFromFile(file string) []Record {
 	// read in file
 	b, _ := ioutil.ReadFile(file)
@@ -55,6 +60,7 @@ func getRecordsFromFile(file string) []Record {
 	return objs
 }
 
+// Writes a Record slice to a given JSON file
 func writeRecordsToFile(records []Record, file string) {
 	// open file to write data to
 	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE, 0666)
@@ -75,6 +81,7 @@ func writeRecordsToFile(records []Record, file string) {
 	f.Close()
 }
 
+// Checks whether a given string exists within a given slice
 func stringInSlice(a string, list []string) bool {
 	for _, b := range list {
 		if b == a {
