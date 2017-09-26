@@ -14,10 +14,16 @@ type Record struct {
 }
 
 func main() {
+	// get command argument
+	command := os.Args[1]
 
-	records := getRecordsFromFile("data.json")
-	addContent(records)
-	fmt.Println("Done...")
+	// perform chosen command
+	switch command {
+	case "tag":
+		records := getRecordsFromFile("data.json")
+		addContent(records)
+	}
+
 }
 
 // Adds new content to the data store
@@ -25,17 +31,17 @@ func addContent(records []Record) {
 	// check whether a record already exists for file
 	existing := -1
 	for i, record := range records {
-		if record.FileName == os.Args[1] {
+		if record.FileName == os.Args[2] {
 			existing = i
 		}
 	}
 
 	// update records with new content
 	if existing < 0 {
-		newFile := Record{os.Args[1], os.Args[2:]}
+		newFile := Record{os.Args[2], os.Args[3:]}
 		records = append(records, newFile)
 	} else {
-		for _, tag := range os.Args[2:] {
+		for _, tag := range os.Args[3:] {
 			if !stringInSlice(tag, records[existing].Tags) {
 				records[existing].Tags =
 					append(records[existing].Tags, tag)
