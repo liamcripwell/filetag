@@ -1,18 +1,13 @@
 [
 	{
-		"filename": "maud",
+		"filename": "bill",
 		"tags": [
-			"francais",
-			"fromage",
-			"europeenne"
+			"garcon"
 		]
 	},
 	{
 		"filename": "liam",
 		"tags": [
-			"oiseau",
-			"egg",
-			"beef",
 			"garcon"
 		]
 	}

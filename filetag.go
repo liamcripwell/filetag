@@ -17,13 +17,29 @@ func main() {
 	// get command argument
 	command := os.Args[1]
 
+	// read existing records from disk
+	records := getRecordsFromFile("data.json")
+
 	// perform chosen command
+	// TODO thing
 	switch command {
 	case "tag":
-		records := getRecordsFromFile("data.json")
 		addContent(records)
+	case "untag":
+		removeContent(records)
 	}
 
+}
+
+func removeContent(records []Record) {
+	for i, record := range records {
+		if record.FileName == os.Args[2] {
+			records = append(records[:i], records[i+1:]...)
+		}
+	}
+
+	// write updated data to file
+	writeRecordsToFile(records, "data.json")
 }
 
 // Adds new content to the data store
@@ -69,7 +85,7 @@ func getRecordsFromFile(file string) []Record {
 // Writes a Record slice to a given JSON file
 func writeRecordsToFile(records []Record, file string) {
 	// open file to write data to
-	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE, 0666)
+	f, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		fmt.Println("Can't open data file...")
 		return
@@ -81,6 +97,8 @@ func writeRecordsToFile(records []Record, file string) {
 	if err != nil {
 		fmt.Println("Can't create json...")
 	}
+
+	fmt.Println(string(data))
 
 	// write data to file
 	f.Write(data)
