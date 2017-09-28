@@ -8,7 +8,15 @@
 	{
 		"filename": "liam",
 		"tags": [
-			"cheese"
+			"cheese",
+			"steak"
+		]
+	},
+	{
+		"filename": "maud",
+		"tags": [
+			"fromage",
+			"francaise"
 		]
 	}
 ]

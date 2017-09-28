@@ -16,6 +16,7 @@ type Record struct {
 /*
 TODO:
  - get records with tag
+ - list tags for specific file
 */
 func main() {
 	// get command argument
@@ -85,8 +86,16 @@ func addContent(records []Record) {
 
 	// update records with new content
 	if existing < 0 {
-		// FIXME: handle duplicate tags
-		newFile := Record{os.Args[2], os.Args[3:]}
+		// generate list of unique tags to add
+		var newTags []string
+		for _, tag := range os.Args[3:] {
+			if !stringInSlice(tag, newTags) {
+				newTags = append(newTags, tag)
+			}
+		}
+
+		// create and save new Record
+		newFile := Record{os.Args[2], newTags}
 		records = append(records, newFile)
 	} else {
 		for _, tag := range os.Args[3:] {
