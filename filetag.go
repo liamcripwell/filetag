@@ -50,27 +50,33 @@ func removeContent(records []Record) {
 		}
 	} else {
 		// if specific tags have been listed for removal
-		for _, record := range records {
+		for i := 0; i < len(records); i++ {
 			// locate specified file record
-			if record.FileName == os.Args[2] {
+			if records[i].FileName == os.Args[2] {
 				// make a copy of file taglist
-				cloneTags := make([]string, len(record.Tags))
-				copy(record.Tags, cloneTags)
+				cloneTags := make([]string, len(records[i].Tags))
+				copy(cloneTags, records[i].Tags)
+
+				fmt.Println(len(records[i].Tags))
 
 				// remove tags from file taglist
 				for j, tag := range cloneTags {
 					for _, toRemove := range os.Args[3:] {
-						fmt.Print(toRemove)
+						fmt.Println(toRemove)
 						if tag == toRemove {
-							record.Tags = append(record.Tags[:j], record.Tags[j+1:]...)
-							fmt.Println(tag)
+							if len(records[i].Tags) > 1 {
+								records[i].Tags = append(records[i].Tags[:j], records[i].Tags[j+1:]...)
+							} else {
+								records[i].Tags = nil
+							}
+							fmt.Println(len(records[i].Tags))
 						}
 					}
 				}
-				break
 			}
 		}
 	}
+	fmt.Println("final len =", len(records[1].Tags))
 
 	// write updated data to file
 	writeRecordsToFile(records, "data.json")
