@@ -36,7 +36,6 @@ func main() {
 
 // Removes existing content from the data store
 func removeContent(records []Record) {
-	// TODO: remove tags
 	// TODO: warning
 
 	// if no specific tags have been listed for removal
@@ -53,30 +52,22 @@ func removeContent(records []Record) {
 		for i := 0; i < len(records); i++ {
 			// locate specified file record
 			if records[i].FileName == os.Args[2] {
-				// make a copy of file taglist
-				cloneTags := make([]string, len(records[i].Tags))
-				copy(cloneTags, records[i].Tags)
-
-				fmt.Println(len(records[i].Tags))
-
-				// remove tags from file taglist
-				for j, tag := range cloneTags {
+				for j := 0; j < len(records[i].Tags); j++ {
 					for _, toRemove := range os.Args[3:] {
-						fmt.Println(toRemove)
-						if tag == toRemove {
+						// if a matching tag is found, remove it
+						if records[i].Tags[j] == toRemove {
 							if len(records[i].Tags) > 1 {
-								records[i].Tags = append(records[i].Tags[:j], records[i].Tags[j+1:]...)
+								records[i].Tags =
+									append(records[i].Tags[:j], records[i].Tags[j+1:]...)
 							} else {
 								records[i].Tags = nil
 							}
-							fmt.Println(len(records[i].Tags))
 						}
 					}
 				}
 			}
 		}
 	}
-	fmt.Println("final len =", len(records[1].Tags))
 
 	// write updated data to file
 	writeRecordsToFile(records, "data.json")
