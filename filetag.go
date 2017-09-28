@@ -38,9 +38,37 @@ func main() {
 func removeContent(records []Record) {
 	// TODO: remove tags
 	// TODO: warning
-	for i, record := range records {
-		if record.FileName == os.Args[2] {
-			records = append(records[:i], records[i+1:]...)
+
+	// if no specific tags have been listed for removal
+	if len(os.Args) == 3 {
+		for i, record := range records {
+			// remove entire record of specified file
+			if record.FileName == os.Args[2] {
+				records = append(records[:i], records[i+1:]...)
+				break
+			}
+		}
+	} else {
+		// if specific tags have been listed for removal
+		for _, record := range records {
+			// locate specified file record
+			if record.FileName == os.Args[2] {
+				// make a copy of file taglist
+				cloneTags := make([]string, len(record.Tags))
+				copy(record.Tags, cloneTags)
+
+				// remove tags from file taglist
+				for j, tag := range cloneTags {
+					for _, toRemove := range os.Args[3:] {
+						fmt.Print(toRemove)
+						if tag == toRemove {
+							record.Tags = append(record.Tags[:j], record.Tags[j+1:]...)
+							fmt.Println(tag)
+						}
+					}
+				}
+				break
+			}
 		}
 	}
 
