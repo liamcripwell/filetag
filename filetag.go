@@ -20,19 +20,42 @@ TODO:
 */
 func main() {
 	// get command argument
-	command := os.Args[1]
+	if len(os.Args) > 1 {
+		command := os.Args[1]
 
-	// read existing records from disk
-	records := getRecordsFromFile("data.json")
+		// read existing records from disk
+		records := getRecordsFromFile("data.json")
 
-	// perform chosen command
-	switch command {
-	case "tag":
-		addContent(records)
-	case "untag":
-		removeContent(records)
+		// perform chosen command
+		switch command {
+		case "tag":
+			addContent(records)
+		case "untag":
+			removeContent(records)
+		case "list":
+			// check if a filename is given
+			if len(os.Args) > 2 {
+				listTags(records, os.Args[2])
+			} else {
+				fmt.Println("no filename provided...")
+			}
+		}
+	} else {
+		fmt.Println("no command provided...")
 	}
 
+}
+
+func listTags(records []Record, filename string) {
+	for _, record := range records {
+		if record.FileName == filename {
+			for _, tag := range record.Tags {
+				fmt.Print(tag, " ")
+			}
+			fmt.Println("")
+			break
+		}
+	}
 }
 
 // Removes existing content from the data store
