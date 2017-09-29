@@ -39,13 +39,34 @@ func main() {
 			} else {
 				fmt.Println("no filename provided...")
 			}
+		case "with":
+			listRecords(records)
 		}
 	} else {
 		fmt.Println("no command provided...")
 	}
-
 }
 
+// Lists all files which possess all specified tags
+func listRecords(records []Record) {
+	for _, record := range records {
+		// identify matching files
+		match := 0
+		for _, tag := range os.Args[2:] {
+			if stringInSlice(tag, record.Tags) {
+				match++
+			} else {
+				break
+			}
+		}
+		// output matching files
+		if match == len(os.Args[2:]) {
+			fmt.Println(record.FileName)
+		}
+	}
+}
+
+// Lists all tags of a specified file
 func listTags(records []Record, filename string) {
 	for _, record := range records {
 		if record.FileName == filename {
@@ -116,7 +137,6 @@ func addContent(records []Record) {
 				newTags = append(newTags, tag)
 			}
 		}
-
 		// create and save new Record
 		newFile := Record{os.Args[2], newTags}
 		records = append(records, newFile)
